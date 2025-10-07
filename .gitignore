@@ -1,0 +1,49 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+package-lock.json        # optionally keep if you want deterministic installs; otherwise ignore
+.env                     # environment variables (secrets)
+.env.*                   # any environment variant files
+coverage/                # test coverage
+.vscode/                 # optional editor settings (uncomment if you want to keep VSCode settings out)
+.DS_Store
+dist/
+build/
+*.local
+*.log
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Redis-related
+dump.rdb                 # default RDB snapshot file (if you ever mount it locally)
+appendonly.aof           # AOF persistence file
+redis.conf               # local config files (if you don't want them in repo)
+redis-stack-data/        # example named volume mapped folder (if you mount container data locally)
+redis-data/              # another common local mount name
+
+# Docker
+docker-compose.override.yml
+docker-compose.override*.yml
+*.env.local              # docker env overrides
+**/Dockerfile.swp        # temp swap files
+docker-compose.*.local
+
+# Logs and runtime files
+logs/
+*.pid
+*.sock
+
+# IDEs and editors (optional, keep/comment as desired)
+# .vscode/                # VS Code - uncomment if you don't want workspace settings committed
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Misc
+*.bak
+*.tmp
