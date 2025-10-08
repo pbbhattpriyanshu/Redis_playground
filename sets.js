@@ -11,6 +11,7 @@ async function testRedis() {
   await client.quit();
 }
 
+//Add and remove members from a set
 async function setFirst() {
     // Add members to a set
     await client.sAdd("fruits", "Watermelon");
@@ -25,4 +26,19 @@ async function setFirst() {
     
 }
 
-setFirst();
+//Check for element in set - 1 = true, 0 = false
+async function checkMember() {
+    const result = await client.sIsMember("fruits", "oranges");
+
+    //better answer
+    if (result === 1) {
+        console.log("It is a member of the set");
+    } else {
+        console.log("It is not a member of the set");
+    }
+
+    //quit the client connection
+    await client.quit();
+}
+
+checkMember();
