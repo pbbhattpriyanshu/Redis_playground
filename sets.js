@@ -11,3 +11,18 @@ async function testRedis() {
   await client.quit();
 }
 
+async function setFirst() {
+    // Add members to a set
+    await client.sAdd("fruits", "Watermelon");
+
+    //Remove a member from the set
+    await client.sRem("fruits", "oragnge");
+
+    console.log("Work is Done");
+
+    //quit the client connection
+    await client.quit();
+    
+}
+
+setFirst();
