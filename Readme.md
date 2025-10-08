@@ -15,6 +15,9 @@ A simple Node.js playground to learn and experiment with Redis data structures a
     - [Key Expiry](#key-expiry)
     - [Storing JSON Data](#storing-json-data)
     - [List Operations](#list-operations)
+    - [Set Operations](#set-operations)
+    - [Hash Operations](#hash-operations)
+    - [Caching with Redis](#caching-with-redis)
 6. [Code Structure](#code-structure)
 7. [Further Reading](#further-reading)
 
@@ -22,7 +25,7 @@ A simple Node.js playground to learn and experiment with Redis data structures a
 
 ## Overview
 
-This project demonstrates basic Redis operations using Node.js. It covers connecting to Redis, setting and getting string values, expiring keys, storing JSON objects, and working with Redis lists.
+This project demonstrates basic Redis operations using Node.js. It covers connecting to Redis, setting and getting string values, expiring keys, storing JSON objects, working with Redis lists, sets, hashes, and using Redis for caching API responses.
 
 ---
 
@@ -34,9 +37,22 @@ flowchart TD
     B -->|connect| C[(Redis Server)]
     A -->|set/get/expire| C
     A -->|store JSON| C
-    A -->|list ops| C
+    A -->|list/set/hash ops| C
+    A -->|cache API| C
     C -->|response| A
 ```
+
+---
+
+## Before & After Redis
+
+**Before using Redis (Direct API call):**
+
+![Before Redis](assets/before.PNG)
+
+**After using Redis (API response cached):**
+
+![After using Redis](assets/after redis.PNG)
 
 ---
 
@@ -71,12 +87,21 @@ flowchart TD
     node list.js
     ```
 
-- The scripts will:
-    - Connect to Redis
-    - Store a user object as JSON
-    - Set expiry on keys
-    - Retrieve and log values
-    - Demonstrate list operations (push, pop, length)
+- **Run the set demo:**
+    ```sh
+    node sets.js
+    ```
+
+- **Run the hash demo:**
+    ```sh
+    node hash.js
+    ```
+
+- **Run the caching API server:**
+    ```sh
+    node Redis_project.js
+    ```
+    - Visit [http://localhost:3000/data](http://localhost:3000/data) in your browser.
 
 ---
 
@@ -133,6 +158,56 @@ flowchart TD
     - `lRange(key, start, stop)` - Get elements in a range
     - `lIndex(key, index)` - Get element by index
 
+### Set Operations
+
+- [Redis Set Documentation](https://redis.io/docs/latest/develop/data-types/sets/)
+
+- **Add members to a set:**
+    ```js
+    await client.sAdd("fruits", "Watermelon");
+    ```
+- **Remove a member from the set:**
+    ```js
+    await client.sRem("fruits", "orange");
+    ```
+- **Check if an element is a member:**
+    ```js
+    const result = await client.sIsMember("fruits", "oranges");
+    ```
+
+### Hash Operations
+
+- [Redis Hash Documentation](https://redis.io/docs/latest/develop/data-types/hashes/)
+
+- **Add fields to a hash:**
+    ```js
+    await client.hSet("player:1", { name: "Piyush", age: "26", city: "New York", carName: "BMW" });
+    ```
+- **Access a field from the hash:**
+    ```js
+    const name = await client.hGet("player:1", "name");
+    ```
+- **Remove a field from the hash:**
+    ```js
+    await client.hDel("player:1", "age");
+    ```
+
+### Caching with Redis
+
+- [Redis Caching Documentation](https://redis.io/docs/latest/develop/use-cases/caching/)
+
+- **Cache API response with expiry:**
+    ```js
+    // Check cache
+    const cachedData = await client.get('externalData');
+    if (cachedData) {
+        return res.json(JSON.parse(cachedData));
+    }
+    // Fetch and cache
+    const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
+    await client.setEx('externalData', 3600, JSON.stringify(response.data));
+    ```
+
 ---
 
 ## Code Structure
@@ -146,8 +221,20 @@ flowchart TD
 - `list.js`  
   Demonstrates Redis list operations (push, pop, length).
 
+- `sets.js`  
+  Demonstrates Redis set operations (add, remove, check membership).
+
+- `hash.js`  
+  Demonstrates Redis hash operations (add, get, delete fields).
+
+- `Redis_project.js`  
+  Express server showing Redis caching for API responses.
+
 - `package.json`  
   Project metadata and dependencies.
+
+- `assets/`  
+  Contains images for before/after Redis usage.
 
 ---
 
@@ -156,6 +243,9 @@ flowchart TD
 - [Redis Official Documentation](https://redis.io/documentation)
 - [Node.js Redis Client](https://github.com/redis/node-redis)
 - [Redis List Data Type](https://redis.io/docs/latest/develop/data-types/lists/)
+- [Redis Set Data Type](https://redis.io/docs/latest/develop/data-types/sets/)
+- [Redis Hash Data Type](https://redis.io/docs/latest/develop/data-types/hashes/)
+- [Redis Caching Use Case](https://redis.io/docs/latest/develop/use-cases/caching/)
 - [Mermaid Diagrams](https://mermaid-js.github.io/mermaid/#/)
 
 ---
